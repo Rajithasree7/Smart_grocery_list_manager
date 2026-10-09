@@ -1,0 +1,265 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Grocery Manager</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="brand">
+            <span class="brand-icon">🛒</span>
+            <div>
+                <h2>Smart Grocery</h2>
+                <small>Plan smarter. Shop better.</small>
+            </div>
+        </div>
+
+        <nav>
+            <button class="nav-link active" data-page="dashboard">▦ Dashboard</button>
+            <button class="nav-link" data-page="lists">☷ Grocery Lists</button>
+            <button class="nav-link" data-page="items">🧺 Grocery Items</button>
+            <button class="nav-link" data-page="history">◷ Shopping History</button>
+        </nav>
+
+        <div class="sidebar-note">
+            <span>🌱</span>
+            <p>Shop mindfully.<br>Save more every week!</p>
+        </div>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">YOUR PERSONAL SHOPPING ASSISTANT</p>
+                <h1 id="page-title">Dashboard</h1>
+            </div>
+            <div class="connection">
+                <span class="status-dot"></span>
+                <span id="connection-status">Connecting...</span>
+            </div>
+        </header>
+
+        <div id="notice" class="notice hidden"></div>
+
+        <section id="dashboard-page" class="page">
+            <div class="welcome">
+                <div>
+                    <p class="eyebrow">YOUR GROCERY OVERVIEW</p>
+                    <h2>Make every grocery trip count. ✨</h2>
+                    <p>Keep track of your lists, expenses, and everyday essentials.</p>
+                </div>
+                <span class="welcome-emoji">🥑</span>
+            </div>
+
+            <div class="stats-grid">
+                <article class="stat-card">
+                    <span class="stat-icon green">🧺</span>
+                    <p>Total grocery items</p>
+                    <h2 id="stat-items">—</h2>
+                    <small>In your item catalog</small>
+                </article>
+                <article class="stat-card">
+                    <span class="stat-icon purple">☷</span>
+                    <p>Grocery lists</p>
+                    <h2 id="stat-lists">—</h2>
+                    <small>Your saved lists</small>
+                </article>
+                <article class="stat-card">
+                    <span class="stat-icon orange">🪙</span>
+                    <p>Pending item cost</p>
+                    <h2 id="stat-pending">₹0.00</h2>
+                    <small>Estimated, not actual spending</small>
+                </article>
+                <article class="stat-card">
+                    <span class="stat-icon blue">💳</span>
+                    <p>Total recorded spending</p>
+                    <h2 id="stat-spent">₹0.00</h2>
+                    <small>From shopping trip records</small>
+                </article>
+            </div>
+
+            <div class="section-heading">
+                <div>
+                    <h2>Your grocery lists</h2>
+                    <p>Review budgets and estimated list costs.</p>
+                </div>
+                <button class="primary-btn" data-go="lists">+ Create a list</button>
+            </div>
+            <div id="dashboard-lists" class="list-grid"></div>
+        </section>
+
+        <section id="lists-page" class="page hidden">
+            <div class="section-heading">
+                <div>
+                    <h2>Organize your shopping</h2>
+                    <p>Create lists and keep track of every item.</p>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h3>Create a grocery list</h3>
+                <form id="create-list-form" class="form-grid">
+                    <label>
+                        List name
+                        <input name="list_name" placeholder="e.g. Weekly Groceries" required maxlength="50">
+                    </label>
+                    <label>
+                        Budget (₹)
+                        <input name="budget" type="number" min="0" step="0.01" placeholder="1000" required>
+                    </label>
+                    <button class="primary-btn" type="submit">Create list</button>
+                </form>
+            </div>
+
+            <div id="all-lists" class="list-grid"></div>
+
+            <div class="panel" id="list-detail-panel">
+                <div class="section-heading compact">
+                    <div>
+                        <h3 id="selected-list-title">Select a grocery list</h3>
+                        <p id="selected-list-subtitle">Its items will appear here.</p>
+                    </div>
+                    <button id="refresh-list-btn" class="secondary-btn" type="button">Refresh</button>
+                </div>
+
+                <form id="add-to-list-form" class="form-grid">
+                    <label>
+                        Grocery list
+                        <select name="list_id" id="list-select" required></select>
+                    </label>
+                    <label>
+                        Item
+                        <select name="item_id" id="item-select" required></select>
+                    </label>
+                    <label>
+                        Quantity
+                        <input name="quantity" type="number" min="1" value="1" required>
+                    </label>
+                    <button class="primary-btn" type="submit">+ Add item</button>
+                </form>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="list-items-body">
+                            <tr><td colspan="6" class="empty">Select a list to view its items.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="items-page" class="page hidden">
+            <div class="section-heading">
+                <div>
+                    <h2>Your item catalog</h2>
+                    <p>Add products and reuse them in your grocery lists.</p>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h3>Add a grocery item</h3>
+                <form id="create-item-form" class="form-grid">
+                    <label>
+                        Item name
+                        <input name="item_name" placeholder="e.g. Tomatoes" required maxlength="50">
+                    </label>
+                    <label>
+                        Category
+                        <input name="category" placeholder="e.g. Vegetables" maxlength="30">
+                    </label>
+                    <label>
+                        Unit price (₹)
+                        <input name="price" type="number" min="0" step="0.01" placeholder="40" required>
+                    </label>
+                    <button class="primary-btn" type="submit">Add item</button>
+                </form>
+            </div>
+
+            <div class="panel">
+                <div class="section-heading compact">
+                    <div>
+                        <h3>Available grocery items</h3>
+                        <p>Prices are per item or unit as entered.</p>
+                    </div>
+                    <button id="refresh-items-btn" class="secondary-btn" type="button">Refresh</button>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Item</th>
+                                <th>Category</th>
+                                <th>Unit price</th>
+                            </tr>
+                        </thead>
+                        <tbody id="items-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="history-page" class="page hidden">
+            <div class="section-heading">
+                <div>
+                    <h2>Shopping history</h2>
+                    <p>Record what you actually spent on a shopping trip.</p>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h3>Record a shopping trip</h3>
+                <form id="trip-form" class="form-grid">
+                    <label>
+                        Grocery list
+                        <select name="list_id" id="trip-list-select" required></select>
+                    </label>
+                    <label>
+                        Date
+                        <input type="date" name="trip_date" id="trip-date" required>
+                    </label>
+                    <label>
+                        Actual amount spent (₹)
+                        <input type="number" name="total_spent" min="0" step="0.01" placeholder="250" required>
+                    </label>
+                    <button class="primary-btn" type="submit">Save trip</button>
+                </form>
+            </div>
+
+            <div class="panel">
+                <h3>Previous trips</h3>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Trip ID</th>
+                                <th>Grocery list</th>
+                                <th>Date</th>
+                                <th>Actual amount spent</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trips-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <footer>Smart Grocery List Manager · Java + JDBC + MySQL</footer>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
